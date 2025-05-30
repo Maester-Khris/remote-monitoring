@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Hello guys whats going on!</p>
+
+    <script>
+        function stream_socket(url){
+            const datasocket = new WebSocket(`ws://${url}`);
+            datasocket.onmessage = (e) =>{
+                const data = JSON.parse(e.data);
+                console.log(data.message);
+            }
+            datasocket.onclose = (e) =>{
+                console.error("connection with socket closed");
+            }
+        }
+
+        function stream_sse(url){
+            // Create a new EventSource instance
+            const eventSource = new EventSource(`http://${url}`); // Replace with your SSE endpoint
+            eventSource.onmessage = function(event) {
+                console.log('Data received from server:', event.data);
+            };
+            eventSource.onerror = function(event) {
+                console.error('Error occurred:', event);
+                if (eventSource.readyState === EventSource.CLOSED) {
+                    console.log('Server has closed the connection.');
+                    eventSource.close();
+                }
+            };
+            eventSource.onopen = function(event) {
+                console.log('Connection to server opened.');
+            };
+
+            // Optional: Close the connection after a certain condition or time
+            // eventSource.close();
+        }
+        
+
+        document.addEventListener("DOMContentLoaded", ()=>{
+            const socket_url_path = "127.0.0.1:8000/ws/data/";
+            const sse_url_path = "127.0.0.1:8000/api/streaming/data"
+            //stream_socket(socket_url_path);
+            stream_sse(sse_url_path);
+        });
+    </script>
+</body>
+</html>

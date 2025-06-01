@@ -8,3 +8,8 @@
 - logs file autodiscovery
 - logs chunks merging and push to remote instance
 - 
+
+# Future update on log streaming
+- when pushing a single line to the client how to tie it with the file is coming from
+- is the actual process optimal ?
+- what will happen when a new celery beat will happen does all the files and all their content be pushed again -> keep track of the last read point

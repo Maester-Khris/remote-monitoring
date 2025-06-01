@@ -35,8 +35,55 @@ def load_data():
 
 def data_producer():
     """Chooses a random object from the loaded data."""
-    data = load_data()  # Load data on each call
-    print(data.keys())
-    todo_user = random.choice(data.values) #use random.choice for better readability
-    print(f"selected todo, {todo_user}")
-    return todo_user
+    data = load_data()  
+    all_chunks = [chunk for chunks in data.values() for chunk in chunks]
+    if not all_chunks:
+        return {"error": "no data"}
+
+    chunk = random.choice(all_chunks)
+
+    all_lines = []
+    for chunk in all_chunks:
+        try:
+            text = chunk.decode('utf-8', errors='ignore')
+            lines = text.strip().split("\n")
+            all_lines.extend(lines)
+        except Exception as e:
+            continue
+
+    print(all_lines[:3])
+    if not all_lines:
+        return {"error": "no valid lines in logs"}
+
+    return all_lines
+   
+    # try:
+    #     text = chunk.decode('utf-8', errors='ignore')
+    #     print(text)
+    #     lines = text.strip().split("\n")
+    #     json_lines = []
+    #     return random.choice(lines)
+
+    # except Exception as e:
+    #     return {"error": f"failed to parse chunk: {str(e)}"}
+
+
+    # for line in text:
+    #     print(line)
+    #     line = line.strip()
+    #     if line:
+    #         try:
+    #             json_obj = json.loads(line)
+    #             json_lines.append(json_obj)
+    #         except json.JSONDecodeError:
+    #             continue
+
+    # print(json_lines)
+    # if not json_lines:
+    #     return {"error": "no valid JSON objects in chunk"}
+
+
+    # print(data.keys())
+    # todo_user = random.choice(list(data.values())) #use random.choice for better readability
+    # print(f"selected todo, {todo_user}")
+    # return todo_user

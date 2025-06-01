@@ -25,10 +25,18 @@ async def sse_stream(request):
         while True:
             if time.time() >= end_time:
                 break  # Exit the loop after 5 minutes
-             
-            todo_user = data_producer()
-            json_data = json.dumps(todo_user)
-            yield f'data: {json_data}\n\n'
-            await asyncio.sleep(1)
 
+            all_lines = data_producer()  # returns the full list now
+
+            for line in all_lines:
+                json_data = json.dumps({"log": line})
+                yield f"data: {json_data}\n\n"
+                await asyncio.sleep(1)  # control flow to simulate live feed
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+
+#=========== Old ============
+# todo_user = data_producer()
+# #print(todo_user)
+# json_data = json.dumps(todo_user)
+# yield f'data: {json_data}\n\n'
+# await asyncio.sleep(1)

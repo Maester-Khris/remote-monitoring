@@ -1,4 +1,4 @@
-from pathlib import Path
+
 import os
 import json
 import random
@@ -6,8 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import cycle
 import threading
 
-DATA_DIR = Path(__file__).resolve().parent.parent
-datapath = os.path.join(DATA_DIR, "data", "logs")
+
 
 class LogTailer:
     def __init__(self, directory, chunk_size=1024 * 1024):
@@ -88,73 +87,8 @@ class LogTailer:
             file_iters = still_active
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ============== independent method defintions for sse service =========
+# Notes: following methods definitions are working 
 
 def read_file_in_chunk(filepath, chunk_size):
     chunks = []
@@ -215,14 +149,9 @@ def data_producer():
 
 
 
-
-
-
-
-
-
-
-
+# ======================== Old code ====================
+# Notes: Not working
+# def data_producer():
 #     data = load_data()  
 #     if not data:
 #         return 

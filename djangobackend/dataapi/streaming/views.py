@@ -10,29 +10,22 @@ from .services import data_producer
 async def sse_stream(request):
     """
     Sends server-sent events to the client during 2min.
-    structure of a todo object: 
-    {
-        "userId": 1,
-        "id": 1,
-        "title": "delectus aut autem",
-        "completed": false
-    }
     """
     async def event_stream():
-        start_time = time.time()  # Record the start time
-        end_time = start_time + 120
+        stop_at = time.time() + 120 # duration in seconds
 
-        while True:
-            if time.time() >= end_time:
-                break  # Exit the loop after 5 minutes
-
-            all_lines = data_producer()  # returns the full list now
-
-            for line in all_lines:
-                json_data = json.dumps({"log": line})
+        while time.time()<stop_at:
+            for filename, line in data_producer():
+                json_data = json.dumps({"filename":filename, "log":line})
                 yield f"data: {json_data}\n\n"
-                await asyncio.sleep(1)  # control flow to simulate live feed
+                await asyncio.sleep(1)
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+
+# all_lines = data_producer()  # returns the full list now
+# for line in all_lines:
+#     json_data = json.dumps({"log": line})
+#     yield f"data: {json_data}\n\n"
+#     await asyncio.sleep(1)  # control flow to simulate live feed
 
 #=========== Old ============
 # todo_user = data_producer()

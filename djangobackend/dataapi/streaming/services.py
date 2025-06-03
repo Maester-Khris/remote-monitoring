@@ -3,6 +3,7 @@ import os
 import json
 import random
 from concurrent.futures import ThreadPoolExecutor
+from itertools import cycle
 
 DATA_DIR = Path(__file__).resolve().parent.parent
 datapath = os.path.join(DATA_DIR, "data", "logs")
@@ -33,57 +34,97 @@ def load_data():
 
     return result
 
+
 def data_producer():
-    """Chooses a random object from the loaded data."""
-    data = load_data()  
-    all_chunks = [chunk for chunks in data.values() for chunk in chunks]
-    if not all_chunks:
-        return {"error": "no data"}
+    data = load_data()
+    if not data:
+        return
 
-    chunk = random.choice(all_chunks)
+    # Create an iterator of (filename, line) for each file
+    file_iterators = []
+    for filename, chunks in data.items():
+        lines = []
+        for chunk in chunks:
+            try:
+                text = chunk.decode("utf-8", errors="ignore")
+                lines.extend(filter(None, text.strip().split("\n")))
+            except Exception:
+                continue
+        file_iterators.append((filename, iter(lines)))
 
-    all_lines = []
-    for chunk in all_chunks:
-        try:
-            text = chunk.decode('utf-8', errors='ignore')
-            lines = text.strip().split("\n")
-            all_lines.extend(lines)
-        except Exception as e:
-            continue
+    # Interleave lines from all iterators
+    iterators = [(fname, it) for fname, it in file_iterators if it]
 
-    print(all_lines[:3])
-    if not all_lines:
-        return {"error": "no valid lines in logs"}
-
-    return all_lines
-   
-    # try:
-    #     text = chunk.decode('utf-8', errors='ignore')
-    #     print(text)
-    #     lines = text.strip().split("\n")
-    #     json_lines = []
-    #     return random.choice(lines)
-
-    # except Exception as e:
-    #     return {"error": f"failed to parse chunk: {str(e)}"}
+    while iterators:
+        still_active = []
+        for fname, it in iterators:
+            try:
+                yield fname, next(it)
+                still_active.append((fname, it))  # keep this one
+            except StopIteration:
+                continue  # this file is exhausted
+        iterators = still_active  # remove exhausted ones
 
 
-    # for line in text:
-    #     print(line)
-    #     line = line.strip()
-    #     if line:
-    #         try:
-    #             json_obj = json.loads(line)
-    #             json_lines.append(json_obj)
-    #         except json.JSONDecodeError:
-    #             continue
-
-    # print(json_lines)
-    # if not json_lines:
-    #     return {"error": "no valid JSON objects in chunk"}
 
 
-    # print(data.keys())
-    # todo_user = random.choice(list(data.values())) #use random.choice for better readability
-    # print(f"selected todo, {todo_user}")
-    # return todo_user
+
+
+
+
+
+
+
+#     data = load_data()  
+#     if not data:
+#         return 
+    
+#     file_iterators = []
+#     for filename, chunks in data.items():
+#         lines = []
+#         for chunk in chunks:
+#             try:
+#                 text = chunk.decode("utf-8", errors="ignore")
+#                 lines.extends(filter(None, text.strip().split("\n")))
+#             except Exception:
+#                 continue
+            
+#             # for line in filter(None, text.strip().split("\n")):
+#             #     yield filename, line
+
+#         file_iterators.append((filename, iter(lines)))
+
+#     # Interleave lines from all iterators
+#     iterators = [(fname, it) for fname, it in file_iterators if it]
+
+#     while iterators:
+#         still_active = []
+#         for fname, it in iterators:
+#             try:
+#                 yield fname, next(it)
+#                 still_active.append((fname, it))  # keep this one
+#             except StopIteration:
+#                 continue
+#         iterators = still_active
+
+
+# all_chunks = [chunk for chunks in data.values() for chunk in chunks]
+# if not all_chunks:
+#     return {"error": "no data"}
+
+# chunk = random.choice(all_chunks)
+
+# all_lines = []
+# for chunk in all_chunks:
+#     try:
+#         text = chunk.decode('utf-8', errors='ignore')
+#         lines = text.strip().split("\n")
+#         all_lines.extend(lines)
+#     except Exception as e:
+#         continue
+
+# #print(all_lines[:3])
+# if not all_lines:
+#     return {"error": "no valid lines in logs"}
+
+# return all_lines

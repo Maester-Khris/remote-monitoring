@@ -1,8 +1,7 @@
-import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 
 import './App.css'
 import reactLogo from './assets/react.svg'
-import CallToActionButton from './components/CallToActionButton'
 import Home from './components/Home'
 import LiveMonitoring from './components/LiveMonitoring'
 import Getmore from './components/Getmore'

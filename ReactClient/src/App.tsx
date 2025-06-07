@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 
 import './App.css'
-import reactLogo from './assets/react.svg'
+// import reactLogo from './assets/react.svg'
+import appLogo from './assets/rx_monitor_brand.png'
 import Home from './Menucomponents/Home'
 import LiveMonitoring from './Menucomponents/LiveMonitoring'
 import Getmore from './Menucomponents/Getmore'
@@ -14,7 +15,7 @@ function App() {
         <header className='main-content'>
           <div className='header-content'>
             <div className='header-content-left'>
-              <img className='header-app-logo' src={reactLogo} alt="" />
+              <img className='header-app-logo' src={appLogo} alt="" />
               <div className='header-app'>
                 <h3 className='header-appname'>Welcome to Rx Monitor</h3>
                 <p>Your solution to remote system monitoring</p>

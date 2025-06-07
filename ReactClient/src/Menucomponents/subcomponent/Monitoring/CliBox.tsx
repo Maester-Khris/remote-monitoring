@@ -1,11 +1,10 @@
 import React from 'react';
 
 interface CliBoxProps {
-  title?: string;
   logs: any[];
 }
 
-export const CliBox: React.FC<CliBoxProps> = ({ title = "Background scraper cmd", logs }) => {
+export const CliBox: React.FC<CliBoxProps> = ({ logs }) => {
   return (
     <div className="flex-1 w-full overflow-y-scroll no-scrollbar relative bg-[#1e1e1e] border border-[#444] rounded-lg shadow-lg p-4 overflow-y-auto">
       {/* Command Lines */}

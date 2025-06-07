@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import {Circle, MagnifyingGlass } from "@phosphor-icons/react";
+import {MagnifyingGlass } from "@phosphor-icons/react";
 import SystemMetrics from './subcomponent/Monitoring/SystemMetrics';
 import VerticalMenu from './subcomponent/VerticalMenu';
 import { CliBox } from './subcomponent/Monitoring/CliBox';
 
 function LiveMonitoring() {
-  const borderstyle= "";
   const cmdLogs = [
     { file: "scraper.py", message: "scraping percentage 100%" },
     { file: "icons.py", message: "read icon list" },

@@ -1,10 +1,8 @@
-import { useState } from 'react'
 import { List, TerminalWindow, X } from "@phosphor-icons/react";
 
 function VerticalMenu() {
     const liStyle = "px-1 py-1"
-    const [isOpen, setIsOpen] = useState(true);
-    //handle onclick button () => setIsOpen(!isOpen)
+    const isOpen = false
 
     return (
         <div className={`bg-gray-800 text-white rounded-tl-[10px] rounded-bl-[10px] relative ${isOpen ? "w-25" : "w-30"} 
@@ -18,7 +16,7 @@ function VerticalMenu() {
             <ul className="mt-10 p-2 space-y-4">
                 <li className={liStyle}>
                     <a href="#" onClick={()=>{}} className="hover:text-gray-300"> 
-                    <TerminalWindow size={20} weight="fill" color="#092E20" className='inline-block mr-1 transform -translate-y-[2px]' /> 
+                    <TerminalWindow size={20} weight="fill" color="#125C3A" className='inline-block mr-1 transform -translate-y-[2px]' /> 
                     Django 
                     </a>
                 </li>

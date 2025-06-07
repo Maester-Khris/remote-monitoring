@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 @import "tailwindcss";
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -46,4 +47,13 @@ body{
   .monitoring-metrics{
     width: 40%!important;
   }
+}
+
+
+.carousel .slide img {
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  margin: 0 auto;
+  object-fit: contain;
 }

@@ -54,7 +54,7 @@ function LiveMonitoring() {
           <h1 className="text-2xl text-black font-bold">System Performance monitoring</h1>
           <p className="mt-0 text-gray-700">Take a look at your system key metrics and logs in real-time.</p>
         </div>
-        <div className='mt-5 flex-1 flex w-full gap-4 bg-gray-100'>
+        <div className='mt-5 w-full flex-1 flex flex-col sm:flex-row gap-4 bg-gray-100'>
           {/* Main section: Part 1 Log Tracker  */}
           <div className="monitoring-logs w-[70%] md:w-[75%] p-4 flex flex-col h-full rounded-lg shadow-lg bg-[#E5E4E2] ">
             {/* title and searchbar  */}

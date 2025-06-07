@@ -2,15 +2,15 @@ import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 
 import './App.css'
 import reactLogo from './assets/react.svg'
-import Home from './components/Home'
-import LiveMonitoring from './components/LiveMonitoring'
-import Getmore from './components/Getmore'
+import Home from './Menucomponents/Home'
+import LiveMonitoring from './Menucomponents/LiveMonitoring'
+import Getmore from './Menucomponents/Getmore'
 
 
 function App() {
   return (
     <BrowserRouter>
-      <main>
+      <main className='mb-2'>
         <header className='main-content'>
           <div className='header-content'>
             <div className='header-content-left'>

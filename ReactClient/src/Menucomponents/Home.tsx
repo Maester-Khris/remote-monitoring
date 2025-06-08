@@ -1,7 +1,6 @@
 // import { Carousel } from "react-responsive-carousel";
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Slider from "react-slick";
-import appFullLogo from '../assets/rx_monitor.png'
 import DjangoBackgr from '../assets/django_background.jpg'
 import ReactBackgr from '../assets/react_back.png'
 import DjangoReactBackgr from '../assets/react_django.png'

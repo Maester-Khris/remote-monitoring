@@ -7,7 +7,13 @@
   "compilerOptions": {
     "types": ["node"],
     "module": "ESNext",
+    "moduleResolution": "Node",
     "target": "ESNext",
-    "moduleResolution": "Node"
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": true
   }
 }

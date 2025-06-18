@@ -23,3 +23,10 @@
 # Notes:
 - Log tailing in a web server is the process of monitoring the server's log files in real-time as new entries are written to them.
 - Implemented a polling based tailing loop in the sse view: similar to tail -f, with low latency and no duplication
+
+
+python manage.py shell
+# Then in the shell:
+from django.core.management.utils import get_random_secret_key
+print(get_random_secret_key())
+exit()

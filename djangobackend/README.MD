@@ -30,3 +30,29 @@ python manage.py shell
 from django.core.management.utils import get_random_secret_key
 print(get_random_secret_key())
 exit()
+
+
+#### Project running command
+docker run -e SECRET_KEY='___your_secret_key____' --name djangobackend --rm -p8000:8000 remote_monitoring
+
+### build docker image locally and make them accessible by minikue
+eval $(minikube docker-env)
+docker build -t your_image_name .
+docker image ls
+eval $(minikube docker-env)
+docker build -t remote_monitoring_kube:latest .
+unset DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_PROMPT
+
+### Kubernetes deployment step
+kubectl apply -f redis-persistent-volume.yaml
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f django-secret.yaml
+kubectl apply -f django-web-deployment.yaml
+--on new terminal
+minikube tunnel
+--on new terminal
+kubectl get svc django-web-service
+kubectl apply -f celery-worker-deployment.yaml
+kubectl apply -f celery-beat-deployment.yaml
+
+

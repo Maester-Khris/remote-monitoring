@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-beat-deployment
+  labels:
+    app: celery-beat
+spec:
+  replicas: 1 # Celery Beat must have only one instance
+  selector:
+    matchLabels:
+      app: celery-beat
+  template:
+    metadata:
+      labels:
+        app: celery-beat
+    spec:
+      containers:
+      - name: celery-beat
+        image: remote_monitoring_kube:latest # Use the same Django app image
+        imagePullPolicy: IfNotPresent # <--- ADD/UPDATE THIS LINE
+        env:
+        - name: CELERY_BROKER_URL
+          value: "redis://redis-service:6379/0" # Points to the internal Redis service
+        envFrom:
+        - secretRef:
+            name: django-secrets # Pass the secret key if needed by tasks
+        command: ["celery"]
+        args: ["-A", "djangobackend", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers.DatabaseScheduler"]
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: celery-beat-service
+  labels:
+    app: celery-beat
+spec:
+  selector:
+    app: celery-beat
+  ports:
+    - protocol: TCP
+      port: 5556 # Placeholder port, if you had a specific need for it
+      targetPort: 5556
+  type: ClusterIP # Only accessible within the cluster

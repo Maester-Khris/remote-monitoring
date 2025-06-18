@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("dataapi.urls")),
     path('', views.index, name="home"),
-    path('about', views.about, name="about")
+    path('about', views.about, name="about"),
+    path('health', views.health_check_view, name="healthcheck")
 ]

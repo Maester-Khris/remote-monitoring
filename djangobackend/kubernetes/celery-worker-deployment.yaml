@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker-deployment
+  labels:
+    app: celery-worker
+spec:
+  replicas: 2 # Start with 2 workers, can be scaled later
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      containers:
+      - name: celery-worker
+        image: remote_monitoring_kube:latest # Use the same Django app image
+        imagePullPolicy: IfNotPresent # <--- ADD/UPDATE THIS LINE
+        env:
+        - name: CELERY_BROKER_URL
+          value: "redis://redis-service:6379/0" # Points to the internal Redis service
+        envFrom:
+        - secretRef:
+            name: django-secrets # Pass the secret key if needed by tasks
+        command: ["celery"]
+        args: ["-A", "djangobackend", "worker", "-l", "info"]
+      restartPolicy: Always # Always restart if the worker crashes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: celery-worker-service
+  labels:
+    app: celery-worker
+spec:
+  selector:
+    app: celery-worker
+  ports:
+    - protocol: TCP
+      port: 5555 # Placeholder port if you later decide to use Flower
+      targetPort: 5555
+  type: ClusterIP # Only accessible within the cluster

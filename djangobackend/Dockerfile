@@ -28,6 +28,7 @@ RUN mv ./djangobackend/settings_prod.py ./djangobackend/settings.py
 # If you're using a non-root user (recommended for production):
 # USER appuser # Ensure collectstatic is run as the app user
 # RUN chown -R appuser:appgroup ${DJANGO_STATIC_ROOT} # Ensure ownership
+
 ENV DJANGO_STATIC_ROOT=/vol/web/static/
 RUN mkdir -p ${DJANGO_STATIC_ROOT}
 

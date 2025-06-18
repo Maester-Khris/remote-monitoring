@@ -96,7 +96,7 @@ CHANNEL_LAYERS = {
 }
 
 # Background task manager
-CELERY_BROKER_URL = 'redis://redis:6379/0'  # URL for the Redis broker
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')  
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
@@ -118,7 +118,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/1',  # Use the appropriate Redis server URL
+        'LOCATION': CELERY_BROKER_URL,  # Use the appropriate Redis server URL
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }

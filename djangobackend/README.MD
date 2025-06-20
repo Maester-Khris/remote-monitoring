@@ -36,26 +36,43 @@ exit()
 docker run -e SECRET_KEY='___your_secret_key____' --name djangobackend --rm -p8000:8000 remote_monitoring
 
 ### build docker image locally and make them accessible by minikue
+minikube start
 eval $(minikube docker-env)
-docker build -t your_image_name .
-docker image ls
-eval $(minikube docker-env)
+sh ./infra_deployment/cleanup.sh
+docker container prune
+docker image prune
 docker build --no-cache -t remote_monitoring_kube:latest .
+sh ./infra_deployment/deployment.sh
+
+#### interacting with cluster
+##### code (env) files changes
+kubectl create configmap django-config --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
+kubectl delete pods -l app=django-web
+kubectl rollout restart deployment django-web-deployment
+
+##### pods monitoring
+kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
+kubectl describe pod django-web-deployment-7f69566db7-9542f
+kubectl exec -it django-web-deployment-7f69566db7-9542f  -- python manage.py shell 
+
+
 unset DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_PROMPT
 
+
 ### Kubernetes deployment step
+kubectl create configmap django-config --from-env-file=.env
 kubectl apply -f redis-persistent-volume.yaml
 kubectl apply -f redis-deployment.yaml
-kubectl create configmap django-config --from-env-file=.env
 kubectl apply -f django-secret.yaml
 kubectl apply -f django-web-deployment.yaml
+kubectl apply -f celery-worker-deployment.yaml
+kubectl apply -f celery-beat-deployment.yaml
+
 --on new terminal
 minikube tunnel
 --on new terminal
 kubectl get svc django-web-service
-kubectl apply -f celery-worker-deployment.yaml
-kubectl apply -f celery-beat-deployment.yaml
 
-kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
+
 
 

@@ -40,12 +40,13 @@ eval $(minikube docker-env)
 docker build -t your_image_name .
 docker image ls
 eval $(minikube docker-env)
-docker build -t remote_monitoring_kube:latest .
+docker build --no-cache -t remote_monitoring_kube:latest .
 unset DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_PROMPT
 
 ### Kubernetes deployment step
 kubectl apply -f redis-persistent-volume.yaml
 kubectl apply -f redis-deployment.yaml
+kubectl create configmap django-config --from-env-file=.env
 kubectl apply -f django-secret.yaml
 kubectl apply -f django-web-deployment.yaml
 --on new terminal
@@ -54,5 +55,7 @@ minikube tunnel
 kubectl get svc django-web-service
 kubectl apply -f celery-worker-deployment.yaml
 kubectl apply -f celery-beat-deployment.yaml
+
+kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
 
 

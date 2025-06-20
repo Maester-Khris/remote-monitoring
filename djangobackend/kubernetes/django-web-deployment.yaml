@@ -24,6 +24,8 @@ spec:
         - name: CELERY_BROKER_URL
           value: "redis://redis-service:6379/0" # Reference the internal Redis service
         envFrom: # Use envFrom for Secrets/ConfigMaps
+        - configMapRef:
+            name: django-config
         - secretRef:
             name: django-secrets # Reference the Secret for SECRET_KEY
         command: ["gunicorn"]

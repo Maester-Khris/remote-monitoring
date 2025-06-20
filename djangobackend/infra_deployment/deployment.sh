@@ -10,13 +10,16 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
+# ===================== configuration and secrets: env variables ============================
 # Create config map from .env
 echo "🔧 Creating ConfigMap from .env..."
 kubectl create configmap django-config --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
+kubectl create configmap nginx-config --from-file=default.conf=nginx.conf --dry-run=client -o yaml | kubectl apply -f -
 
 # Apply Redis Persistent Volume
 echo "📦 Applying Redis Persistent Volume..."
 kubectl apply -f redis-persistent-volume.yaml
+kubectl apply -f nginx_shared_persistentvol.yaml
 
 # Apply Redis Deployment
 echo "🚀 Applying Redis Deployment..."
@@ -25,6 +28,10 @@ kubectl apply -f redis-deployment.yaml
 # Apply Django Secret
 echo "🔐 Applying Django Secret..."
 kubectl apply -f django-secret.yaml
+
+# Apply Nginx Web Deployment
+echo "🌐 Applying Ngin prox Web Deployment..."
+kubectl apply -f nginx-deployment.yaml
 
 # Apply Django Web Deployment
 echo "🌐 Applying Django Web Deployment..."

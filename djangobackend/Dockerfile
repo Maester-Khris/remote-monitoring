@@ -36,7 +36,7 @@ ENV DJANGO_SETTINGS_SKIP_REDIS_CONNECT=1
 
 # Collect static files
 # --noinput prevents prompts for confirmation
-RUN python manage.py collectstatic --noinput
+#RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

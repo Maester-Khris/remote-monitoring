@@ -42,12 +42,16 @@ sh ./infra_deployment/cleanup.sh
 docker container prune
 docker image prune
 docker build --no-cache -t remote_monitoring_kube:latest .
-sh ./infra_deployment/deployment.sh
+cd infra_deployment
+sh cleanup.sh
+sh deployment.sh
+kubectl rollout restart deployment nginx-static-server && django-web-deployment
 
 #### interacting with cluster
 ##### code (env) files changes
 kubectl create configmap django-config --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
 kubectl delete pods -l app=django-web
+kubectl rollout restart deployment nginx-static-server && django-web-deployment
 kubectl rollout restart deployment django-web-deployment
 
 ##### pods monitoring
@@ -55,6 +59,8 @@ kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
 kubectl describe pod django-web-deployment-7f69566db7-9542f
 kubectl exec -it django-web-deployment-7f69566db7-9542f  -- python manage.py shell 
 
+kubectl apply -f debug_pod.yaml
+kubectl exec -it debug-pod -- sh
 
 unset DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_PROMPT
 
@@ -68,11 +74,17 @@ kubectl apply -f django-web-deployment.yaml
 kubectl apply -f celery-worker-deployment.yaml
 kubectl apply -f celery-beat-deployment.yaml
 
+
+### nginx conf updates
+kubectl create configmap nginx-config --from-file=default.conf=nginx.conf --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f nginx-deployment.yaml
+kubectl rollout restart deployment nginx-static-server
+
 --on new terminal
 minikube tunnel
---on new terminal
 kubectl get svc django-web-service
 
-
+command: ["gunicorn"]
+        args: ["--bind", "0.0.0.0:8000", "--workers", "3", "--threads", "2", "djangobackend.wsgi:application"]
 
 

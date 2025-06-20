@@ -28,8 +28,8 @@ spec:
             name: django-config
         - secretRef:
             name: django-secrets # Reference the Secret for SECRET_KEY
-        command: ["gunicorn"]
-        args: ["--bind", "0.0.0.0:8000", "--workers", "3", "--threads", "2", "djangobackend.wsgi:application"]
+        command: ["sh", "-c"]
+        args: ["rm -rf /app/static/* && python manage.py collectstatic --noinput --clear && gunicorn --bind 0.0.0.0:8000 --workers 3 --threads 2 djangobackend.wsgi:application"]
         # Add liveness and readiness probes for robust deployments
         livenessProbe:
           httpGet:
@@ -43,6 +43,19 @@ spec:
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 10
+        volumeMounts:
+        - name: static-media-volume
+          mountPath: /static
+        - name: static-media-volume
+          mountPath: /media
+          
+      volumes:
+      - name: static-media-volume
+        persistentVolumeClaim:
+          claimName: nginx-shared-pvc
+
+
+
       # If your Django app needs a database (e.g., PostgreSQL), you'd define that here too.
       # For simplicity, we are focusing on the components mentioned in the docker-compose.
 ---
@@ -60,3 +73,5 @@ spec:
       port: 80 # External port for the load balancer
       targetPort: 8000 # Internal port of the Django container
   type: LoadBalancer # Expose externally via a LoadBalancer (simulated by Minikube)
+
+

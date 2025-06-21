@@ -22,11 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2y4=dzyo$lslmo93!e@=ig&7^enlo#_=wc1k9$6pva*l0mbws6'
+#DEBUG = bool(os.environ.get("DEBUG", default=0))
+SECRET_KEY = os.environ.get("SECRET_KEY")
+DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true")  
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = []
+raw_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
+ALLOWED_HOSTS = [host.strip().strip('"') for host in raw_hosts.split(",") if host.strip()]
+
+#ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","127.0.0.1,localhost").split(",")
 
 
 # Application definition
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'channels',
+    'django_celery_beat',
     'celery',
     'dataapi',
 ]
@@ -82,30 +86,21 @@ TEMPLATES = [
     },
 ]
 
-# WSGI configuration
+# WSGI and ASGI configuration
 WSGI_APPLICATION = 'djangobackend.wsgi.application'
-
-# ASGI configuration
 ASGI_APPLICATION = 'djangobackend.asgi.application'
 
-# DJANGO CHANNELS CONFIG INMEMORY / REDIS
-# CHANNEL_LAYERS = {
-#     'default':{
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#     },
-# }
-# Configure Channels to use Redis as the channel layer
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  # Adjust if your Redis server is running elsewhere
+            "hosts": [('redis', 6379)],  # Adjust if your Redis server is running elsewhere
         },
     },
 }
 
 # Background task manager
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # URL for the Redis broker
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')  
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
@@ -118,16 +113,20 @@ CELERY_BEAT_SCHEDULE = {
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+   'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get("MYSQL_DATABASE"),
+        'USER': 'root',
+        'PASSWORD': os.environ.get("MYSQL_DATABASE_PASSWORD"),
+        'HOST': 'mysql',  # This matches the mysql service name
+        'PORT': '3306',
     }
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',  # Use the appropriate Redis server URL
+        'LOCATION': CELERY_BROKER_URL,  # Use the appropriate Redis server URL
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
@@ -171,12 +170,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = STATIC_URL + 'assets'
+STATIC_URL = "/static/"
+STATIC_ROOT = "/static"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/media"
 STATICFILES_DIRS = [ os.path.join(BASE_DIR, 'static') ]
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type

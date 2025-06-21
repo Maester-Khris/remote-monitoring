@@ -16,12 +16,22 @@ RUN pip install --upgrade pip
 
 COPY requirements.txt /app/
 
+# system dependencies for mysqlclient
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    dnsutils \
+    libssl-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-RUN rm ./djangobackend/settings.py
-RUN mv ./djangobackend/settings_prod.py ./djangobackend/settings.py
+# RUN rm ./djangobackend/settings.py
+# RUN mv ./djangobackend/settings_prod.py ./djangobackend/settings.py
 
 # --- STATIC FILES CONFIGURATION ---
 # Set the directory where static files will be collected

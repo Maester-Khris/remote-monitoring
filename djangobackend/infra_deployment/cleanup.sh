@@ -6,7 +6,8 @@ echo "🔻 Starting cleanup of all related Kubernetes resources..."
 
 # Delete deployments
 echo "🧹 Deleting Deployments..."
-kubectl delete deployment django-web-deployment celery-worker-deployment celery-beat-deployment redis-deployment --ignore-not-found
+kubectl delete deployment django-web-deployment nginx-static-server celery-worker-deployment celery-beat-deployment mysql-server redis-deployment --ignore-not-found
+kubectl delete job django-migrate-job --ignore-not-found
 
 # Delete services
 echo "🧹 Deleting Services..."
@@ -34,16 +35,20 @@ kubectl delete configmap nginx-config --ignore-not-found
 
 # Delete Secrets
 echo "🧹 Deleting Secret..."
-kubectl delete -f django-secret.yaml --ignore-not-found
+kubectl delete -f ./configs/django-secret.yaml --ignore-not-found
 
 # Optionally: delete any created yaml-based resources
 echo "🧹 Deleting YAML-defined resources..."
-kubectl delete -f redis-persistent-volume.yaml --ignore-not-found
-kubectl delete -f redis-deployment.yaml --ignore-not-found
-kubectl delete -f nginx-deployment.yaml --ignore-not-found
-kubectl delete -f django-secret.yaml --ignore-not-found
-kubectl delete -f django-web-deployment.yaml --ignore-not-found
-kubectl delete -f celery-worker-deployment.yaml --ignore-not-found
-kubectl delete -f celery-beat-deployment.yaml --ignore-not-found
+kubectl delete -f ./configs/django-secret.yaml --ignore-not-found
+kubectl delete -f ./volumes/redis-persistent-volume.yaml --ignore-not-found  
+# kubectl delete -f ./volumes/nginx-shared-volumel.yaml -force --grace-period=0 --ignore-not-found
+kubectl delete -f ./deployments/redis-deployment.yaml --ignore-not-found
+kubectl delete -f ./deployments/nginx-deployment.yaml --ignore-not-found
+kubectl delete -f ./deployments/django-web-deployment.yaml --ignore-not-found
+kubectl delete -f ./deployments/celery-worker-deployment.yaml --ignore-not-found
+kubectl delete -f ./deployments/celery-beat-deployment.yaml --ignore-not-found
+kubectl delete -f ./deployments/debug_pod.yaml --ignore-not-found
+kubectl delete -f ./deployments/mysql-deployment.yaml --ignore-not-found
+kubectl delete -f ./jobs/django-migrations-deployment.yaml --ignore-not-found
 
 echo "✅ Cleanup complete. Your cluster is now in a clean state."

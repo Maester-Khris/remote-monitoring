@@ -29,7 +29,7 @@ spec:
         - secretRef:
             name: django-secrets # Reference the Secret for SECRET_KEY
         command: ["sh", "-c"]
-        args: ["rm -rf /app/static/* && python manage.py collectstatic --noinput --clear && gunicorn --bind 0.0.0.0:8000 --workers 3 --threads 2 djangobackend.wsgi:application"]
+        args: ["rm -rf /static/* && python manage.py collectstatic --noinput --clear && gunicorn --bind 0.0.0.0:8000 --workers 3 --threads 2 djangobackend.wsgi:application"]
         # Add liveness and readiness probes for robust deployments
         livenessProbe:
           httpGet:
@@ -48,7 +48,6 @@ spec:
           mountPath: /static
         - name: static-media-volume
           mountPath: /media
-          
       volumes:
       - name: static-media-volume
         persistentVolumeClaim:

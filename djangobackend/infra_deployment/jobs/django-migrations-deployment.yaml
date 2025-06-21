@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-migrate-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: django-db-migrator
+        image: remote_monitoring_kube:latest
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: django-config
+        - secretRef:
+            name: django-secrets
+        command: ["sh", "-c"]
+        args: ["python manage.py migrate"]
+      restartPolicy: Never

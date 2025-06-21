@@ -24,9 +24,8 @@
 - Log tailing in a web server is the process of monitoring the server's log files in real-time as new entries are written to them.
 - Implemented a polling based tailing loop in the sse view: similar to tail -f, with low latency and no duplication
 
-
-python manage.py shell
 # Then in the shell:
+python manage.py shell
 from django.core.management.utils import get_random_secret_key
 print(get_random_secret_key())
 exit()
@@ -35,33 +34,45 @@ exit()
 #### Project running command
 docker run -e SECRET_KEY='___your_secret_key____' --name djangobackend --rm -p8000:8000 remote_monitoring
 
-### build docker image locally and make them accessible by minikue
+### build docker image locally and make them accessible by minikube
+#### working session start
 minikube start
 eval $(minikube docker-env)
 sh ./infra_deployment/cleanup.sh
-docker container prune
-docker image prune
+docker container prune -f
+docker image prune -f 
 docker build --no-cache -t remote_monitoring_kube:latest .
 cd infra_deployment
+sh deployment.sh
+kubectl get deployment
+kubectl get pods
+
+#### infrastructure live interaction
+gnome-terminal --tab --working-directory="$(pwd)" -- bash -c "minikube tunnel; exec bash"
+gnome-terminal --tab --working-directory="$(pwd)" -- bash -c "kubectl get svc nginx-service; exec bash"
+kubectl get svc nginx-service
+kubectl get svc django-web-service
+
+#### code update
 sh cleanup.sh
 sh deployment.sh
-kubectl rollout restart deployment nginx-static-server && django-web-deployment
+kubectl rollout restart deployment nginx-static-server django-web-deployment mysql-server django-migrate-job
 
 #### interacting with cluster
 ##### code (env) files changes
-kubectl create configmap django-config --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
 kubectl delete pods -l app=django-web
 kubectl rollout restart deployment nginx-static-server && django-web-deployment
-kubectl rollout restart deployment django-web-deployment
 
 ##### pods monitoring
-kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
 kubectl describe pod django-web-deployment-7f69566db7-9542f
+kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
 kubectl exec -it django-web-deployment-7f69566db7-9542f  -- python manage.py shell 
 
+##### debug pod analysis
 kubectl apply -f debug_pod.yaml
 kubectl exec -it debug-pod -- sh
 
+#### working session close
 unset DOCKER_TLS_VERIFY DOCKER_HOST DOCKER_CERT_PATH DOCKER_PROMPT
 
 
@@ -81,10 +92,7 @@ kubectl apply -f nginx-deployment.yaml
 kubectl rollout restart deployment nginx-static-server
 
 --on new terminal
-minikube tunnel
-kubectl get svc django-web-service
 
-command: ["gunicorn"]
-        args: ["--bind", "0.0.0.0:8000", "--workers", "3", "--threads", "2", "djangobackend.wsgi:application"]
+
 
 

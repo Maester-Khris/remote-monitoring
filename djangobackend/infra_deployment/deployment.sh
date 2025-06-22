@@ -43,7 +43,7 @@ echo "🔧 Applying Celery Worker Deployment..s."
 kubectl apply -f ./deployments/celery-worker-deployment.yaml
 echo "⏰ Applying Celery Beat Deployment..."
 kubectl apply -f ./deployments/celery-beat-deployment.yaml
-echo "⏰ Applying Debug pod Deployment..."
-kubectl apply -f ./deployments/debug_pod.yaml
+# echo "⏰ Applying Debug pod Deployment..."
+# kubectl apply -f ./deployments/debug_pod.yaml
 
 echo "✅ Infrastructure deployment completed successfully."

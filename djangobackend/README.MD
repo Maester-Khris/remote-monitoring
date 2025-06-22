@@ -69,7 +69,7 @@ kubectl exec -it <pod-name> -- curl -v http://localhost:8000/health
 kubectl exec -it django-web-deployment-7f69566db7-9542f  -- python manage.py shell 
 
 ##### debug pod analysis
-kubectl apply -f debug_pod.yaml
+kubectl apply -f ./deployments/debug_pod.yaml
 kubectl exec -it debug-pod -- sh
 
 #### working session close
@@ -94,5 +94,21 @@ kubectl rollout restart deployment nginx-static-server
 --on new terminal
 
 
-
-
+actually we have the following architecture (kubernetes cluster)
+- nginx(reverse proxy incoming client request and static asset serving) (1 deployment + loadbalancer service)
+- django app served with gunicorn (1 deployment with 3 replica and loadbalancer service + 1 job deployment for db migration)
+- celery worker (1 deployment with 2 replica) + celery beat to schedule django app async tasks (1 deployment)
+- cluster internal mysql db to store celerybeat schedule, 1 deployment 
+- redis internal database as message broker for celery, (1 deployment + 1 persistent volume)
+- static assets storage: shared persistent volume between django app and nginx
+- Note 
+* represent the kubernetes (a box with rounded corner) cluster witht type of components (deployment,  services, loadbalancer )
+* group related component by architectural design (databases, application layer, async processing)
+* use the same color for arrow arriving in a component (if an arrow arrive at a component with background gold, the arrow will also be gold)
+* use dotted line for relationship related to async processing components
+- Additional
+use exactly the same previous generate background and apply the following modification
+* use a white background for the entire diagram
+* color line (representing relationship with compoent in black)
+* named the line representing the relationship between nginx and shared persistent volumes as (static assets serving)
+* draw a line between redis deployment and redis persistent volume

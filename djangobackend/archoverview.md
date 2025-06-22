@@ -1,3 +1,27 @@
+## cloud architecture deployment component
+- EKS Cluster 
+- EC2 node for cluster worker nodes: django app, celery worker, celery beat
+- Fargate instance for djangoapp migration job
+- EFS IA tier as shared volume (between nginx and django app)
+- EBS gp3 for redis volume
+- ec2 t3 small for mysql server, celery worker, celery beat
+
+Node Group Size	Recommendation
+EC2 Instances	2–3 t3.medium or t3.small
+Capacity	Enough to run:
+- 3 Django pods
+- 1 Celery Worker
+- 1 Celery Beat
+- 1 MySQL pod
+- 1 Redis pod
+- 1 NGINX pod
+
+questions
+- how is nginx deployed
+- is ec2 T2.micro instance with 10gb enough for mysql server 8
+- the local cluster deployment integra a 3 replica for the django app with a loadbalancer service how will the be deployed inside the eks cluster
+
+
 ## System design phases
 Here’s a **step-by-step plan** to transform your local dev infrastructure into a production-grade AWS deployment using **EKS (Kubernetes), NGINX, S3, and RDS MySQL**:
 
@@ -5,15 +29,9 @@ Here’s a **step-by-step plan** to transform your local dev infrastructure into
 
 ### 🌐 **Phase 1: Preparation and Infrastructure Setup**
 
-1. **Create AWS VPC and Networking**
 
-   * Set up subnets, internet gateway, NAT, and route tables.
 
-2. **Provision RDS (MySQL) Instance**
-
-   * Launch a managed MySQL database with private endpoint access.
-
-3. **Set Up S3 Buckets**
+3. **Set Up S3 Buckets** (not mandatory)
 
    * Create S3 buckets for static and media files (with proper policies).
 
@@ -107,22 +125,4 @@ Let me know if you'd like this translated into Terraform steps or a GitOps pipel
 
 
 ## Visual Overview
-                +--------------------+
-                |     Clients        |
-                +---------+----------+
-                          |
-                          v
-                +---------+----------+
-                |       Nginx        |  <- SSL termination, reverse proxy, static/media
-                +---------+----------+
-                          |
-                          v
-                +---------+----------+
-                |     Gunicorn       |  <- Runs Django WSGI app
-                +---------+----------+
-                          |
-      +-------------------+-------------------+
-      |                   |                   |
-      v                   v                   v
-  PostgreSQL           Redis             Celery workers
- (External DB)      (for cache)         (background jobs)
+            

@@ -34,32 +34,39 @@
   <div class="title-border"></div>
 </div>
 
-<div style="padding:20px;border-radius:5px;border:1px solid gray;">
-    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
+<div style="padding:20px 0px;border-radius:5px;">
+
+  <img 
+    src="{% static '/img/backend2.png' %}" 
+    class="d-block w-100" alt="backend architecture" 
+    style="border:2px solid #ffcf40;border-radius:12px;"
+  >
+
+  {% comment %} <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
           <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
           <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
           <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
+      </ol>
+      <div class="carousel-inner">
           <div class="carousel-item active">
-            <img src="{% static '/img/spring-reactive-arch-v2.drawio.png' %}" class="d-block w-100" alt="...">
+              <img src="{% static '/img/spring-reactive-arch-v2.drawio.png' %}" class="d-block w-100" alt="...">
           </div>
           <div class="carousel-item">
-            <img src="{% static '/img/springboot_cicd.png' %}" class="d-block w-100" alt="...">
+              <img src="{% static '/img/springboot_cicd.png' %}" class="d-block w-100" alt="...">
           </div>
           <div class="carousel-item">
-            <img src="{% static '/img/jmeter_result.png' %}" class="d-block w-100" alt="...">
+              <img src="{% static '/img/jmeter_result.png' %}" class="d-block w-100" alt="...">
           </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-target="#carouselExampleCaptions" data-slide="prev">
+      </div>
+      <button class="carousel-control-prev" type="button" data-target="#carouselExampleCaptions" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-target="#carouselExampleCaptions" data-slide="next">
+      </button>
+      <button class="carousel-control-next" type="button" data-target="#carouselExampleCaptions" data-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="sr-only">Next</span>
-        </button>
-      </div>
+      </button>
+  </div> {% endcomment %}
 </div>
 {% endblock content %}

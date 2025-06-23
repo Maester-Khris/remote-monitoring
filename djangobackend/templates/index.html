@@ -9,32 +9,32 @@
   <div class="title-border"></div>
 </div>
 <p class="leading">
-  We designed a web app that allows users or guest to decide which language/Framerwork/Tools is
-  the best by participating to a live perpetual vote. To simulate data coming in a real-time fashion
-  way from multiple sources, we implemented a <strong>multi-threaded environment</strong> where threads produce
-  new vote
-  on existing resources. <br> This project, built with <strong>Java 8</strong> and <strong>Spring boot
-    Framework</strong> implements
-  <span class="imp">real-time data updates</span> using asynchronous client data submission, leveraging Axios for
-  robust
-  client-server communication. Also it employs <strong>server-sent events</strong> through reactive programming,
-  utilizing Spring boot <span class="imp">Reactor Sinks API and Mono.fromRunnable</span> to create a web-thread
-  producer for efficient event handling.
+  This project represents a production-grade Kubernetes-based backend infrastructure designed to support scalable web applications with emphasis on asynchronous processing, robust job scheduling, and real-time log streaming. The architecture is modular and decouples key components to ensure maintainability and extensibility across services.
 </p>
-<p style="margin-bottom: 5px;">Following are some keypoints that has been focused on:</p>
-<ul style="">
-  <li>Web Security with Form authentication and Basic Api Authorization</li>
-  <li>Restful Api Design and Documentation</li>
-  <li>Asynchronous CRUD Operation using Reactive Crud Repository</li>
-  <li>Concurrency Management</li>
-  <li>Configuration Management</li>
-  <li>CI/CD Pipeline</li>
-</ul>
+<h3>Core Features</h3>
+  <ul>
+    <li><strong>Job Scheduling:</strong> Celery Beat is integrated for time-based and recurring task execution, ensuring scheduled jobs are persisted and coordinated with the MySQL database layer.</li>
+    <li><strong>Asynchronous Task Management:</strong> Celery Workers handle background job execution triggered by user actions or scheduled jobs. Redis acts as a reliable broker with persistent backup for durability.</li>
+    <li><strong>Log Management with SSE:</strong> Server-Sent Events (SSE) are used to push real-time logs and status updates from the backend to remote clients for improved observability.</li>
+    <li><strong>Multithreaded Log Reading:</strong> A dedicated log reading service processes application logs using multithreading, enhancing throughput and responsiveness in streaming logs to clients.</li>
+    <li><strong>Healthcheck API &amp; Error Management:</strong> A well-defined healthcheck API endpoint monitors the status of core services. Errors are logged and handled gracefully, providing actionable insights for infrastructure observability.</li>
+  </ul>
 
-<p>Next we present some a schematic overview of the work addressed by presenting first the <strong>application
-    compenent architecture diagram</strong>. Next we present the <strong>CI/CD flow</strong> implemented to ensure
-  a continuous streamline environment. Last we present a proof a concept of the robustness of our application
-  through a screenshot of a <strong>performance testing</strong> applied on our app rest api using <strong>Apache
-    JMeter</strong> to send 100 request during 1min simulating the launch and execution of 100 thread producer
-  working on the shared resources. The schema clearly present the answer and the value proposed</p>
+  <h3>Deployment Overview</h3>
+  <ul>
+    <li><strong>Application Layer:</strong> Includes NGINX for static asset serving and a Django application for dynamic content. The application is exposed through dedicated Kubernetes services for load balancing and routing.</li>
+    <li><strong>Storage Layer:</strong> A shared persistent volume is mounted for the Django application and a separate standalone job responsible for database migrations.</li>
+    <li><strong>Async Processing:</strong> Celery Beat and Celery Workers operate in a dedicated processing zone, backed by a Redis deployment with persistent volume support.</li>
+    <li><strong>Database Layer:</strong> MySQL is used as the core relational database with direct integration for job scheduling and data persistence.</li>
+  </ul>
+
+  <p>
+    This architecture ensures high availability, scalability, and observability, aligning with modern DevOps and microservices principles for cloud-native applications.
+  </p>
+{% comment %} <p style="margin-bottom: 5px;">Following are some keypoints that has been focused on:</p>
+<ul style="">
+ 
+</ul> {% endcomment %}
+
+
 {% endblock content %}
